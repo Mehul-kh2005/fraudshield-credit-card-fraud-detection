@@ -1,0 +1,97 @@
+# ------------------------------
+# Python cache / build
+# ------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# ------------------------------
+# Virtual Environments
+# ------------------------------
+.venv/
+venv/
+env/
+ENV/
+.conda/
+*.conda
+*.virtualenv
+
+# ------------------------------
+# Logs / Cache
+# ------------------------------
+*.log
+logs/
+cache/
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# ------------------------------
+# Jupyter / IPython
+# ------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# ------------------------------
+# Streamlit
+# ------------------------------
+.streamlit/
+secrets.toml
+
+# ------------------------------
+# Models & Scalers
+# ------------------------------
+# Ignore all by default
+*.pkl
+*.joblib
+
+# Keep these important ones
+!fraudshield_best_model.pkl
+!scaler.pkl
+
+# ------------------------------
+# Data
+# ------------------------------
+# Ignore large datasets
+*.csv
+*.tsv
+*.xlsx
+
+# Keep example CSVs for demo/testing
+!single_transaction_examples.csv
+
+# ------------------------------
+# IDE / Editor configs
+# ------------------------------
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ------------------------------
+# Deployment / Docker
+# ------------------------------
+*.env
+.env.*
+docker-compose.override.yml
+
+# ------------------------------
+# Reports / Outputs
+# ------------------------------
+outputs/
+reports/
+results/
+figures/
+plots/
