@@ -104,7 +104,7 @@ Multiple ML models were trained and compared:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Mehul-kh2005/FRAUDSHIELD-Credit-Card-Fraud-Detection.git
+git clone https://github.com/Mehul-kh2005/fraudshield-credit-card-fraud-detection.git
 cd FRAUDSHIELD-Credit-Card-Fraud-Detection
 ```
 
