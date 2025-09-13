@@ -298,19 +298,14 @@ def add_footer():
             padding: 12px 25px;
             font-size: 18px;
             font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             border-top: 1px solid #ddd;
             z-index: 1000;
         }}
-        .footer-text {{
-            margin: 0 auto;
-            text-align: center;
-            flex: 1;
-        }}
-        .footer-logo img {{
-            height: 45px;
+        .footer img {{
+            height: 30px;
+            margin-left: 10px; /* space between text and logo */
+            vertical-align: middle;
             background: rgba(255,255,255,0.7);
             border-radius: 8px;
             padding: 2px;
@@ -324,14 +319,11 @@ def add_footer():
             margin-left: 0;
             width: 100%;
         }}
-
         </style>
 
         <div class="footer">
-            <div class="footer-text">✨ Built with care by <b>Mehul Khandelwal</b></div>
-            <div class="footer-logo">
-                <img src="data:image/png;base64,{logo_base64}" alt="Logo">
-            </div>
+            ✨ Built with care by <b>Mehul Khandelwal</b>
+            <img src="data:image/png;base64,{logo_base64}" alt="Logo">
         </div>
         """,
         unsafe_allow_html=True
