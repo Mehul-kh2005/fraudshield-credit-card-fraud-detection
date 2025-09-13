@@ -31,11 +31,30 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ================= Global Style Reset =================
+st.markdown("""
+    <style>
+    html, body, [class*="css"]  {
+        zoom: 1 !important;              /* reset scaling */
+        font-size: 16px !important;      /* base font size */
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .stMarkdown p, .stMarkdown li {
+        font-size: 16px !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # ================= Header =================
 st.markdown("""
     <div style="text-align: center;">
-        <h1 style="font-size: clamp(36px, 5vw, 55px);">FraudShield: Credit Card Fraud Detection 💳</h1>
-        <p style="font-size: 22px;">
+        <h1 style="font-size: 36px;">FraudShield: Credit Card Fraud Detection 💳</h1>
+        <p style="font-size: 18px;">
             Detect fraudulent transactions using a <b>Machine Learning model</b> trained on real-world credit card data.
         </p>
     </div>
