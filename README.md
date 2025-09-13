@@ -1,4 +1,4 @@
-# 🛡️ FRAUDSHIELD – Credit Card Fraud Detection
+# 🛡️ FRAUDSHIELD – Credit Card Fraud Detection 💳
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue.svg) ![Streamlit](https://img.shields.io/badge/Streamlit-App-red.svg) ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
@@ -139,7 +139,7 @@ streamlit run app.py
 
 ## 👨‍💻 Author
 
-**Mehul Khandelwal** – [GitHub](https://github.com/Mehul-kh2005) | [LinkedIn](https://www.linkedin.com/in/mehul-khandelwal2005/)
+**Mehul Khandelwal** – [GitHub](https://github.com/Mehul-kh2005) | [LinkedIn](https://www.linkedin.com/in/mehulkhandelwal2005/)
 
 ---
 
