@@ -48,17 +48,6 @@ ipython_config.py
 secrets.toml
 
 # ------------------------------
-# Models & Scalers
-# ------------------------------
-# Ignore all by default
-*.pkl
-*.joblib
-
-# Keep these important ones
-!fraudshield_best_model.pkl
-!scaler.pkl
-
-# ------------------------------
 # Data
 # ------------------------------
 # Ignore large datasets

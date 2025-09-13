@@ -21,8 +21,7 @@ feature_columns = model_data["feature_names"]  # 30 features: Time, V1-V28, Amou
 scaler = joblib.load("scaler.pkl")
 
 # Load training medians for PCA features (V1-V28)
-X_train_res = pd.read_csv("X_train_resampled.csv")
-pca_medians = X_train_res.median().values[1:-1]  # skip Time and Class
+pca_medians = joblib.load("pca_medians.pkl")
 
 # ================= Streamlit Page Config =================
 st.set_page_config(
@@ -178,7 +177,6 @@ elif mode == "Batch CSV Upload":
     st.sidebar.subheader("📂 Upload CSV File for Multiple Transactions")
     uploaded_file = st.file_uploader("Choose CSV File", type=["csv"])
 
-    # 📝 CSV Requirements Note
     st.info(
         """
         ⚠️ **Important Instructions for CSV Upload**  
@@ -192,72 +190,76 @@ elif mode == "Batch CSV Upload":
     )
 
     if uploaded_file is not None:
-        df_input = pd.read_csv(uploaded_file)
+        try:
+            df_input = pd.read_csv(uploaded_file)
 
-        # Fill missing PCA features
-        for i in range(1,29):
-            col = f"V{i}"
-            if col not in df_input.columns:
-                df_input[col] = pca_medians[i-1]
+            # Fill missing PCA features
+            for i in range(1, 29):
+                col = f"V{i}"
+                if col not in df_input.columns:
+                    df_input[col] = pca_medians[i-1]
 
-        for col in ["Time","Amount"]:
-            if col not in df_input.columns:
-                df_input[col] = 0.0
+            for col in ["Time", "Amount"]:
+                if col not in df_input.columns:
+                    df_input[col] = 0.0
 
-        df_input[["Time","Amount"]] = scaler.transform(df_input[["Time","Amount"]])
-        df_input = df_input[feature_columns]
+            df_input[["Time", "Amount"]] = scaler.transform(df_input[["Time", "Amount"]])
+            df_input = df_input[feature_columns]
 
-        # Predictions
-        y_prob = model.predict_proba(df_input)[:,1]
-        y_pred = (y_prob > threshold).astype(int)
-        df_input["Fraud_Probability"] = y_prob
-        df_input["Prediction"] = y_pred
-        df_input["Prediction_Label"] = df_input["Prediction"].apply(lambda x: "Fraud" if x==1 else "Legit")
+            # Predictions
+            y_prob = model.predict_proba(df_input)[:, 1]
+            y_pred = (y_prob > threshold).astype(int)
+            df_input["Fraud_Probability"] = y_prob
+            df_input["Prediction"] = y_pred
+            df_input["Prediction_Label"] = df_input["Prediction"].apply(lambda x: "Fraud" if x==1 else "Legit")
 
-        st.success(f"✅ Predictions completed for {len(df_input)} transactions")
+            st.success(f"✅ Predictions completed for {len(df_input)} transactions")
 
-        # Highlight fraud
-        def highlight_fraud(row):
-            return ['background-color: #ff9999' if row["Prediction_Label"]=="Fraud" else '' for _ in row]
+            # Fraud highlighting
+            def highlight_fraud(row):
+                return ['background-color: #ff9999' if row["Prediction_Label"]=="Fraud" else '' for _ in row]
 
-        st.markdown('<p class="section-header">🔍 Prediction Results</p>', unsafe_allow_html=True)
-        st.dataframe(df_input.head(200).style.apply(highlight_fraud, axis=1))
-        st.info("📌 Showing first 200 rows with fraud highlighting. Download full results below.")
+            st.markdown('<p class="section-header">🔍 Prediction Results</p>', unsafe_allow_html=True)
+            st.dataframe(df_input.head(200).style.apply(highlight_fraud, axis=1))
+            st.info("📌 Showing first 200 rows with fraud highlighting. Download full results below.")
 
-        # Save styled Excel
-        def to_excel_styled(df):
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-                df.to_excel(writer, index=False, sheet_name="Predictions")
-                workbook = writer.book
-                worksheet = writer.sheets["Predictions"]
-                red_format = workbook.add_format({"bg_color": "#FF9999"})
-                fraud_rows = df.index[df["Prediction_Label"]=="Fraud"].tolist()
-                for row in fraud_rows:
-                    worksheet.set_row(row+1, None, red_format)
-            return output.getvalue()
+            # Save styled Excel
+            def to_excel_styled(df):
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+                    df.to_excel(writer, index=False, sheet_name="Predictions")
+                    workbook = writer.book
+                    worksheet = writer.sheets["Predictions"]
+                    red_format = workbook.add_format({"bg_color": "#FF9999"})
+                    fraud_rows = df.index[df["Prediction_Label"]=="Fraud"].tolist()
+                    for row in fraud_rows:
+                        worksheet.set_row(row+1, None, red_format)
+                return output.getvalue()
 
-        excel_data = to_excel_styled(df_input)
+            excel_data = to_excel_styled(df_input)
 
-        st.download_button(
-            label="📥 Download Predictions (Excel with Fraud Highlighting)",
-            data=excel_data,
-            file_name="fraud_predictions.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        )
+            st.download_button(
+                label="📥 Download Predictions (Excel with Fraud Highlighting)",
+                data=excel_data,
+                file_name="fraud_predictions.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
 
-        # Fraud distribution
-        st.markdown('<p class="section-header">📊 Fraud Probability Distribution</p>', unsafe_allow_html=True)
-        fig2 = go.Figure()
-        fig2.add_trace(go.Histogram(x=df_input["Fraud_Probability"]*100, nbinsx=50, marker_color='indianred'))
-        fig2.update_layout(
-            xaxis_title="Fraud Probability (%)",
-            yaxis_title="Number of Transactions",
-            bargap=0.2
-        )
-        st.plotly_chart(fig2, use_container_width=True)
+            # Fraud distribution
+            st.markdown('<p class="section-header">📊 Fraud Probability Distribution</p>', unsafe_allow_html=True)
+            fig2 = go.Figure()
+            fig2.add_trace(go.Histogram(x=df_input["Fraud_Probability"]*100, nbinsx=50, marker_color='indianred'))
+            fig2.update_layout(
+                xaxis_title="Fraud Probability (%)",
+                yaxis_title="Number of Transactions",
+                bargap=0.2
+            )
+            st.plotly_chart(fig2, use_container_width=True)
 
-
+        except Exception as e:
+            st.error("❌ The uploaded file could not be processed. Please check that it has the correct format and required columns.")
+            st.exception(e)  
+            
 # ================= Footer =================
 def add_footer():
     logo_path = "logo.png"  # your logo file
